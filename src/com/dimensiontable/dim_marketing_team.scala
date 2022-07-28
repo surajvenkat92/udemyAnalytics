@@ -73,7 +73,7 @@ object dim_marketing_team extends App{
     
             
     (marketingDf.write.format("bigquery")
-      .option("table", "dimension_tables.dim_marketing_team_1")
+      .option("table", "dimension_tables.dim_marketing_team")
       .mode(SaveMode.Append)
       .save())
    
@@ -86,7 +86,7 @@ object dim_marketing_team extends App{
     
             
     (marketingDf.write.format("bigquery")
-      .option("table", "dimension_tables.dim_marketing_team_1")
+      .option("table", "dimension_tables.dim_marketing_team")
       .mode(SaveMode.Append)
       .save())
    

@@ -8,6 +8,7 @@ import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.types.StringType
 import org.apache.spark.sql.types.StructField
 import org.apache.spark.sql.types.DateType
+import org.apache.spark.sql.SaveMode
 
 object FactTablePopulation extends App{
   
@@ -15,17 +16,10 @@ object FactTablePopulation extends App{
    Logger.getLogger("org").setLevel(Level.ERROR);
   
    val spark = SparkSession.builder().master("local[*]")
-    .appName("populatingDimCampaign")
+    .appName("FactTablePopulation")
     .getOrCreate()
     
    
-import org.apache.spark.sql.SparkSession
-import org.apache.log4j.Level
-import org.apache.log4j.Logger
-import org.apache.spark.sql.types.IntegerType
-import org.apache.spark.sql.types.StructType
-import org.apache.spark.sql.types.StringType
-import org.apache.spark.sql.types.StructField
 
     val bucket = "edtech_analytics_dump"
   spark.conf.set("temporaryGcsBucket", bucket)
@@ -113,19 +107,19 @@ import org.apache.spark.sql.types.StructField
               "course_campaign_name", "course_campaign_start_date",
               "course_campaign_end_date","user_response_time","user_id")
               
-      userEventDetails.createOrReplaceTempView("userEventDetails")
+      (userEventDetails.createOrReplaceTempView("userEventDetails"))
       
       
       val groupedCte = spark.sql("""SELECT campaign_id, event_type, user_id,count(*) over(partition by campaign_id,user_id,event_type) as event_count
         FROM userEventDetails""")
         
         
-     userDetailsJoinedCte.join(userEventDetailsJoined,userDetailsJoinedCte.col("user_id")===userEventDetailsJoined.col("user_id"),joinType)
+     (userDetailsJoinedCte.join(userEventDetailsJoined,userDetailsJoinedCte.col("user_id")===userEventDetailsJoined.col("user_id"),joinType)
                          .join(groupedCte,userDetailsJoinedCte.col("user_id")===groupedCte.col("user_id"))
                          .drop(groupedCte.col("user_id"))
-                         .drop(userEventDetailsJoined.col("user_id")).createOrReplaceTempView("factTablePopulation")
+                         .drop(userEventDetailsJoined.col("user_id")).createOrReplaceTempView("factTablePopulation"))
                          
-     spark.sql("""select ROW_NUMBER() OVER() AS fact_campaign_key, 
+    val transformedDf = spark.sql("""select ROW_NUMBER() OVER() AS fact_campaign_key, 
             campaign_key,
             user_details_key AS user_key,
             event_type_key,
@@ -146,7 +140,13 @@ import org.apache.spark.sql.types.StructField
             event_Count, 
             EXTRACT(YEAR FROM course_campaign_start_date) AS campaign_year, 
             EXTRACT(MONTH FROM course_campaign_start_date) AS campaign_month,
-            EXTRACT(DAY FROM course_campaign_start_date) AS campaign_date from factTablePopulation""").show
+            EXTRACT(DAY FROM course_campaign_start_date) AS campaign_date from factTablePopulation""")
+         
+            transformedDf.show()
+    (transformedDf.write.format("bigquery")
+      .option("table", "fact_tables.fact_campaign_agenda")
+      .mode(SaveMode.Append)
+      .save())
                          
                     
   

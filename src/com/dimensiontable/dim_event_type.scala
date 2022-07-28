@@ -15,7 +15,7 @@ object dim_event_type extends App {
   Logger.getLogger("org").setLevel(Level.ERROR);
 
   val spark = SparkSession.builder().master("local[*]")
-    .appName("populatingDimMarketingTeam")
+    .appName("populatingDimEventType")
     .getOrCreate()
 
   val bucket = "edtech_analytics_dump"

@@ -15,7 +15,7 @@ object CampaignRelatedDimensions extends App{
     Logger.getLogger("org").setLevel(Level.ERROR);
   
    val spark = SparkSession.builder().master("local[*]")
-    .appName("populatingDimMarketingTeam")
+    .appName("CampaignRelatedDimensions")
     .getOrCreate()
     
       

@@ -11,7 +11,7 @@ object UserRelatedDimensions extends App {
   
   
   val spark = SparkSession.builder().master("local[*]")
-    .appName("populatingDimDeviceType")
+    .appName("UserRelatedDimensions")
     .getOrCreate()
 
   val user_details_schema = StructType(List(

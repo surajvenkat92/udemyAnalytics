@@ -11,7 +11,7 @@ import org.apache.spark.sql.SaveMode
 
 object dim_user_details extends App{
   
-  val spark = SparkSession.builder().appName("populatingDimDeviceType")
+  val spark = SparkSession.builder().appName("populatingDimUserDetails")
     .getOrCreate()
 
   
@@ -57,7 +57,7 @@ object dim_user_details extends App{
     transformedDf.show()
 
     (transformedDf.write.format("bigquery")
-      .option("table", "dimension_tables.dim_user_details_1")
+      .option("table", "dimension_tables.dim_user_details")
       .mode(SaveMode.Append)
       .save())
 
@@ -73,7 +73,7 @@ object dim_user_details extends App{
     transformedDf.show()
 
     (transformedDf.write.format("bigquery")
-      .option("table", "dimension_tables.dim_user_details_1")
+      .option("table", "dimension_tables.dim_user_details")
       .mode(SaveMode.Append)
       .save())
 

@@ -11,17 +11,10 @@ import org.apache.spark.sql.SaveMode
 object dim_country_type extends App {
 
   val spark = SparkSession.builder().master("local[*]")
-    .appName("populatingDimDeviceType")
+    .appName("populatingDimCountryType")
     .getOrCreate()
 
-  import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.types.IntegerType
-import org.apache.spark.sql.types.StructType
-import org.apache.spark.sql.types.StructField
-import org.apache.spark.sql.types.StringType
-import org.apache.spark.sql.functions.exp
-import org.apache.spark.sql.SaveMode  
-    
+   
   val user_details_schema = StructType(List(
     StructField("user_id", IntegerType),
     StructField("user_name", StringType),
@@ -63,7 +56,7 @@ import org.apache.spark.sql.SaveMode
     transformedDf.show()
 
     (transformedDf.write.format("bigquery")
-      .option("table", "dimension_tables.dim_country_1")
+      .option("table", "dimension_tables.dim_country")
       .mode(SaveMode.Append)
       .save())
 
@@ -79,7 +72,7 @@ import org.apache.spark.sql.SaveMode
     transformedDf.show()
 
     (transformedDf.write.format("bigquery")
-      .option("table", "dimension_tables.dim_country_1")
+      .option("table", "dimension_tables.dim_country")
       .mode(SaveMode.Append)
       .save())
 
